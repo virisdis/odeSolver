@@ -26,6 +26,12 @@ class euler_im
 {
   public:
   
+    void set(state_type& x, time_type& dt)
+    {
+      resize(x, I);
+      set_identity_m(I);
+    }
+  
     template <typename system_type, typename system_j_type>
     void do_step(system_type& system,
                  system_j_type& system_j,
@@ -61,7 +67,7 @@ class euler_im
   
     state_type dx, dxdt;
     matrix_type J, // якобиан
-                I,
+                I, // единичная матрица
                 A; // матрица I-dt*J
 
     const value_type zero = 0;
@@ -74,22 +80,22 @@ class euler_im
       
       // resize для матриц всегда возвращает квадратную матрицу
       resize(x, J);
-      resize(x, I);
       resize(x, A);
       
     }
     
     void set_identity_m(matrix_type& M)
     {
-      for(unsigned int i = 0; i < M.size1(); i++)
+      for (unsigned int i = 0; i < M.size1(); i++)
       {
-        for(unsigned int j = 0; j < M.size2(); j++)
+        for (unsigned int j = 0; j < M.size2(); j++)
         {
           (i == j) ?  M(i,j) = one : M(i,j) = zero;
         }
       }
     }
 
+    
     state_type solve(matrix_type& A, state_type& b) // A*x = b
     {
       // возможно, для большей модульности стоило не ограничивать возможность представления входных данных одними лишь векторами и матрицами из boost.uBLAS

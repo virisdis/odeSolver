@@ -27,6 +27,7 @@ void driver_const(
                   std::ofstream& resultfile
                  )
 {
+  stepper.set(x, dt);
 
   for (time_type t = t_start; t < t_end; )
   {
@@ -56,6 +57,8 @@ void driver_const(
                   std::ofstream& resultfile
                  )
 {
+  stepper.set(x, dt);
+
   for (time_type t = t_start; t < t_end; )
   {
     stepper.do_step(system, system_j, x, t, dt); // меняется x

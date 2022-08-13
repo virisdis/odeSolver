@@ -20,6 +20,11 @@ class runge_kutta
 {
   public:
   
+    void set(state_type& x, time_type& dt)
+    {
+      dt2 = dt/static_cast<time_type>(2); dt3 = dt/static_cast<time_type>(3); dt6 = dt/static_cast<time_type>(6);
+    }
+  
     template <typename system_type>
     void do_step(system_type& system,
                  state_type& x,
@@ -33,8 +38,6 @@ class runge_kutta
                                             scale_sum2;
       typedef typename operations::template scale_sum5<value_type, time_type, time_type, time_type, time_type>
                                             scale_sum5;
-      
-      dt2 = dt/static_cast<time_type>(2); dt3 = dt/static_cast<time_type>(3); dt6 = dt/static_cast<time_type>(6);
       
       system(x, k1, t); // установка k1
       

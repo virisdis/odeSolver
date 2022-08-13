@@ -21,6 +21,11 @@ class euler
 
   public:
   
+    void set(state_type& x, time_type& dt)
+    {
+    // placeholder
+    }
+  
     template <typename system_type>
     void do_step(system_type& system,
                  state_type& x,

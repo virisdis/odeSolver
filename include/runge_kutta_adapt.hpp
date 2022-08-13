@@ -23,6 +23,16 @@ class runge_kutta_adapt
 {
   public:
   
+    void set(state_type& x, time_type& dt, const value_type& error)
+    {
+      dt12 = dt/static_cast<time_type>(2); dt13 = dt/static_cast<time_type>(3); dt16 = dt/static_cast<time_type>(6); dt18 = dt/static_cast<time_type>(8),
+      dt21 = static_cast<time_type>(2)*dt; dt23 = (static_cast<time_type>(2)/static_cast<time_type>(3))*dt;
+      dt32 = (static_cast<time_type>(3)/static_cast<time_type>(2))*dt; dt38 = (static_cast<time_type>(3)/static_cast<time_type>(8))*dt;
+      
+      error164 = error/static_cast<value_type>(64); // наверное, не случится ничего страшного, если делать это вместе с установкой доль dt
+    }
+    
+
     template <typename system_type>
     void do_step(system_type& system,
                  state_type& x,
@@ -40,13 +50,7 @@ class runge_kutta_adapt
                                             scale_sum3;
       typedef typename operations::template scale_sum4<value_type, time_type, time_type, time_type>
                                             scale_sum4;
-      
-      dt12 = dt/static_cast<time_type>(2); dt13 = dt/static_cast<time_type>(3); dt16 = dt/static_cast<time_type>(6); dt18 = dt/static_cast<time_type>(8),
-      dt21 = static_cast<time_type>(2)*dt; dt23 = (static_cast<time_type>(2)/static_cast<time_type>(3))*dt;
-      dt32 = (static_cast<time_type>(3)/static_cast<time_type>(2))*dt; dt38 = (static_cast<time_type>(3)/static_cast<time_type>(8))*dt;
-      
-      const value_type error164 = error/static_cast<value_type>(64);
-      
+
       system(x, k1, t); // установка k1
       
       s_algebra.for_each3(x_tmp, x, k1, scale_sum2(one, dt13)); // подготовка x_tmp для k2
@@ -74,14 +78,6 @@ class runge_kutta_adapt
 
     }
     
-    /*
-    void set_dt_fracts(time_type& dt)
-    {
-      this->dt12 = dt/2.; this->dt13 = dt/3.; this->dt16 = dt/6.; this->dt18 = dt/8.;
-      this->dt21 = 2.*dt; this->dt23 = (2./3.)*dt;
-      this->dt32 = -(3./2.)*dt; this->dt38 = (3./8.)*dt;
-    }
-    */
 
   private:
       
@@ -96,7 +92,8 @@ class runge_kutta_adapt
     time_type dt12, dt13, dt16, dt18,
               dt21, dt23,
               dt32, dt38;
-    
+              
+    value_type error164;
     
     void adjust_size(const state_type& x)
     {
